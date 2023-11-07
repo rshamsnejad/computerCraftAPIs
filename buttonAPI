@@ -2,135 +2,135 @@
 
 -- a basic draw function, used by draw
 local rawDraw = function(term, startx, starty, width, height, textx, texty, text, isVertical)
-	c = 0
-	y = starty
-	while y < starty + height do
-		term.setCursorPos(startx, y)
-		x = startx
-		while x < startx + width do
-			if text and not isVertical and y == texty and x == textx + c and c < #text then
-				term.write(text:sub(c + 1, c + 1))
-				c = c + 1
-			elseif text and isVertical and y == texty + c and x == textx and c < #text then
-				term.write(text:sub(c + 1, c + 1))
-				c = c + 1
-			else
-				term.write(" ")
-			end
-			x = x + 1
-		end
-		y = y + 1
-	end
+    c = 0
+    y = starty
+    while y < starty + height do
+        term.setCursorPos(startx, y)
+        x = startx
+        while x < startx + width do
+            if text and not isVertical and y == texty and x == textx + c and c < #text then
+                term.write(text:sub(c + 1, c + 1))
+                c = c + 1
+            elseif text and isVertical and y == texty + c and x == textx and c < #text then
+                term.write(text:sub(c + 1, c + 1))
+                c = c + 1
+            else
+                term.write(" ")
+            end
+            x = x + 1
+        end
+        y = y + 1
+    end
 end
 
 local button = {
-	get = function(self, term, ...)
-		ret = {}
-		termx, termy = term.getSize()
-		for _, par in ipairs(arg) do
-			table.insert(ret, type(self[par]) == "function" and self[par](self, termx, termy) or self[par])
-		end
-		return unpack(ret)
-	end,
+    get = function(self, term, ...)
+        ret = {}
+        termx, termy = term.getSize()
+        for _, par in ipairs(arg) do
+            table.insert(ret, type(self[par]) == "function" and self[par](self, termx, termy) or self[par])
+        end
+        return unpack(ret)
+    end,
 
-	-- draw the button
-	-- takes the term and the panel offset
-	draw = function(self, term, offx, offy)
-		isSticky, startx, starty, width, height, text, isVertical, textColor, backgroundColor = self:get(term, "isSticky", "x", "y", "width", "height", "text", "isVertical", "textColor", "backgroundColor")
+    -- draw the button
+    -- takes the term and the panel offset
+    draw = function(self, term, offx, offy)
+        isSticky, startx, starty, width, height, text, isVertical, textColor, backgroundColor = self:get(term, "isSticky", "x", "y", "width", "height", "text", "isVertical", "textColor", "backgroundColor")
 
-		if isSticky then
-			offx = 0
-			offy = 0
-		end
+        if isSticky then
+            offx = 0
+            offy = 0
+        end
 
-		if isVertical then
-			textX = startx + math.floor(width / 2)
-			textY = starty + math.floor((height - #text) / 2)
-		else
-			textX = startx + math.floor((width - #text) / 2)
-			textY = starty + math.floor(height / 2)
-		end
+        if isVertical then
+            textX = startx + math.floor(width / 2)
+            textY = starty + math.floor((height - #text) / 2)
+        else
+            textX = startx + math.floor((width - #text) / 2)
+            textY = starty + math.floor(height / 2)
+        end
 
-		if textColor then
-			term.setTextColor(textColor)
-		end
-		if backgroundColor then
-			term.setBackgroundColor(backgroundColor)
-		end
+        if textColor then
+            term.setTextColor(textColor)
+        end
+        if backgroundColor then
+            term.setBackgroundColor(backgroundColor)
+        end
 
-		rawDraw(term, startx + offx, starty + offy, width, height, textX + offx, textY + offy, text, isVertical)
-	end
+        rawDraw(term, startx + offx, starty + offy, width, height, textX + offx, textY + offy, text, isVertical)
+    end
 }
 
 local function isOneOfTypes(var, ...)
-	for _, v in ipairs(arg) do
-		if type(var) == v then
-			return true
-		end
-	end
-	return false
+    for _, v in ipairs(arg) do
+        if type(var) == v then
+            return true
+        end
+    end
+    return false
 end
 
 function new(options)
-	assert(isOneOfTypes(options.x, "number", "function"), "button.new: x is not a number or function")
-	assert(isOneOfTypes(options.y, "number", "function"), "button.new: y is not a number or function")
-	assert(isOneOfTypes(options.width, "number", "function"), "button.new: width is not a number or function")
-	assert(isOneOfTypes(options.height, "number", "function"), "button.new: height is not a number or function")
+    assert(isOneOfTypes(options.x, "number", "function"), "button.new: x is not a number or function")
+    assert(isOneOfTypes(options.y, "number", "function"), "button.new: y is not a number or function")
+    assert(isOneOfTypes(options.width, "number", "function"), "button.new: width is not a number or function")
+    assert(isOneOfTypes(options.height, "number", "function"), "button.new: height is not a number or function")
 
-	local o = {
-		x = options.x,
-		y = options.y,
-		width = options.width,
-		height = options.height,
-		text = options.text or "",
-		isSticky = options.isSticky or false,
-		isVertical = options.isVertical or false,
-		textColor = options.textColor or colors.black,
-		backgroundColor = options.backgroundColor or colors.white,
-		callback = options.callback
-	}
+    local o = {
+        x = options.x,
+        y = options.y,
+        width = options.width,
+        height = options.height,
+        text = options.text or "",
+        isSticky = options.isSticky or false,
+        isVertical = options.isVertical or false,
+        textColor = options.textColor or colors.black,
+        backgroundColor = options.backgroundColor or colors.white,
+        callback = options.callback
+    }
 
-	setmetatable(o, {__index = button})
+    setmetatable(o, {__index = button})
 
-	return o
+    return o
 end
 
 function newText(options)
-	assert(isOneOfTypes(options.x, "number", "function"), "button.newLabel: x is not a number or function")
-	assert(isOneOfTypes(options.y, "number", "function"), "button.newLabel: y is not a number or function")
-	assert(isOneOfTypes(options.width, "number", "function"), "button.newLabel: width is not a number or function")
-	assert(isOneOfTypes(options.height, "number", "function"), "button.newLabel: height is not a number or function")
-	assert(isOneOfTypes(options.text, "string"), "button.newLabel: text is not a string")
+    assert(isOneOfTypes(options.x, "number", "function"), "button.newLabel: x is not a number or function")
+    assert(isOneOfTypes(options.y, "number", "function"), "button.newLabel: y is not a number or function")
+    assert(isOneOfTypes(options.width, "number", "function"), "button.newLabel: width is not a number or function")
+    assert(isOneOfTypes(options.height, "number", "function"), "button.newLabel: height is not a number or function")
+    assert(isOneOfTypes(options.text, "string"), "button.newLabel: text is not a string")
 
-	local o = {
-		x = options.x,
-		y = options.y,
-		width = options.width,
-		height = options.height,
-		text = options.text,
-		isSticky = options.isSticky or false,
-		isVertical = options.isVertical or false,
-		textColor = options.textColor or colors.white,
-		backgroundColor = options.backgroundColor or colors.black,
-	}
+    local o = {
+        x = options.x,
+        y = options.y,
+        width = options.width,
+        height = options.height,
+        text = options.text,
+        isSticky = options.isSticky or false,
+        isVertical = options.isVertical or false,
+        textColor = options.textColor or colors.white,
+        backgroundColor = options.backgroundColor or colors.black,
+    }
 
-	setmetatable(o, {__index = button})
+    setmetatable(o, {__index = button})
 
-	return o
+    return o
 end
 
 function newLabel(options)
-	assert(isOneOfTypes(options.button, "table"), "button.newLabel: button is not a button")
-	o = newText(options)
-	o.button = options.button;
+    assert(isOneOfTypes(options.button, "table"), "button.newLabel: button is not a button")
+    o = newText(options)
+    o.button = options.button;
 
-	o.callback = function(self, xPos, yPos)
-		if type(self.button.callback) == "function" then
-			return self.button:callback(xPos, yPos)
-		end
-	end
+    o.callback = function(self, xPos, yPos)
+        if type(self.button.callback) == "function" then
+            return self.button:callback(xPos, yPos)
+        end
+    end
 
-	return o
+    return o
 end
 
 --
@@ -138,27 +138,27 @@ end
 anchorTop = 1
 
 anchorBottom = function(element, termx, termy)
-	return termy
+    return termy
 end
 
 anchorLeft = 1
 
 anchorRight = function(element, termx, termy)
-	return termx
+    return termx
 end
 
 width = function(percent)
-	return function(element, termx, termy)
-		return math.floor(termx * percent)
-	end
+    return function(element, termx, termy)
+        return math.floor(termx * percent)
+    end
 end
 
 maxWidth = width(1)
 
 height = function(percent)
-	return function(element, termx, termy)
-		return math.floor(termy * percent)
-	end
+    return function(element, termx, termy)
+        return math.floor(termy * percent)
+    end
 end
 
 maxHeight = height(1)

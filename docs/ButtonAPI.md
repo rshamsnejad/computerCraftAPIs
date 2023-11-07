@@ -45,12 +45,12 @@ every parameter can be a function with the following signature `function(element
 ## Example
 ```lua
 button = buttonAPI.new({
-	x = 3,
-	y = 1,
-	width = buttonAPI.maxWidth,
-	heigth = 2,
-	text = "button",
-	isSticky = true,
-	textColor = colors.green
+    x = 3,
+    y = 1,
+    width = buttonAPI.maxWidth,
+    heigth = 2,
+    text = "button",
+    isSticky = true,
+    textColor = colors.green
 })
 ```

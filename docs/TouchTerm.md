@@ -8,12 +8,12 @@ This demo shows how to draw sticky and none-sticky buttons, how to move the back
 
 ```lua
 buttonUp = buttonAPI.new({
-	text = "up",
-	x = buttonAPI.anchorLeft,
-	y = buttonAPI.anchorTop,
-	isSticky = true,
-	width = buttonAPI.maxWidth,
-	height = 1
+    text = "up",
+    x = buttonAPI.anchorLeft,
+    y = buttonAPI.anchorTop,
+    isSticky = true,
+    width = buttonAPI.maxWidth,
+    height = 1
 })
 ```
 
@@ -27,23 +27,23 @@ This function serves as callback function for all 4 movement buttons. It moves t
 
 ```lua
 handler = function(element, x, y)
-	dx = 0
-	dy = 0
-	if element == buttonUp then
-		dy = -1
-	elseif element == buttonDown then
-		dy = 1
-	elseif element == buttonLeft then
-		dx = -1
-	elseif element == buttonRight then
-		dx = 1
-	elseif element == testbtn then
-		testbtn.backgroundColor = testbtn.backgroundColor == colors.green and colors.red or colors.green
-	else
-		error("Unknown Button")
-	end
-	viewport:move(dx, dy)
-	return true -- requests redraw of current viewport
+    dx = 0
+    dy = 0
+    if element == buttonUp then
+        dy = -1
+    elseif element == buttonDown then
+        dy = 1
+    elseif element == buttonLeft then
+        dx = -1
+    elseif element == buttonRight then
+        dx = 1
+    elseif element == testbtn then
+        testbtn.backgroundColor = testbtn.backgroundColor == colors.green and colors.red or colors.green
+    else
+        error("Unknown Button")
+    end
+    viewport:move(dx, dy)
+    return true -- requests redraw of current viewport
 end
 ```
 
@@ -53,7 +53,7 @@ Finally we register a callback to the `mouse_click` event, which gets queued if 
 
 ```lua
 eventDispatcherAPI.addHandler("mouse_click", function(event, side, xPos, yPos)
-	viewport:handleClick(xPos, yPos)
+    viewport:handleClick(xPos, yPos)
 end)
 
 eventDispatcherAPI.runDispatchLoop()

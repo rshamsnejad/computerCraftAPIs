@@ -36,10 +36,10 @@ viewportRight:addElement(testbtn)
 This is nearly the same as in [docs/TouchTerm.md](./TouchTerm.md). We just call `move(dx, dy)` for both viewports within the `handler` function:
 ```lua
 handler = function(element, x, y)
-	[...]
-	viewportLeft:move(dx, dy)
-	viewportRight:move(dx, dy)
-	return true
+    [...]
+    viewportLeft:move(dx, dy)
+    viewportRight:move(dx, dy)
+    return true
 end
 ```
 
@@ -48,23 +48,23 @@ end
 Register an event handler for `monitor_touch` events for each monitor and register a `monitor_resize` handler for both of them, too. And finally run the dispatch loop.
 ```lua
 eventDispatcherAPI.addFilteredHandler("monitor_touch", "monitor_0", function(event, side, xPos, yPos)
-	redraw = viewportLeft:handleClick(xPos, yPos)
-	if redraw then
-		viewportRight:redraw()
-	end
+    redraw = viewportLeft:handleClick(xPos, yPos)
+    if redraw then
+        viewportRight:redraw()
+    end
 end)
 eventDispatcherAPI.addFilteredHandler("monitor_touch", "monitor_1", function(event, side, xPos, yPos)
-	redraw = viewportRight:handleClick(xPos, yPos)
-	if redraw then
-		viewportLeft:redraw()
-	end
+    redraw = viewportRight:handleClick(xPos, yPos)
+    if redraw then
+        viewportLeft:redraw()
+    end
 end)
 
 eventDispatcherAPI.addFilteredHandler("monitor_resize", "monitor_0", function()
-	viewportLeft:redraw()
+    viewportLeft:redraw()
 end)
 eventDispatcherAPI.addFilteredHandler("monitor_resize", "monitor_1", function()
-	viewportRight:redraw()
+    viewportRight:redraw()
 end)
 
 eventDispatcherAPI.runDispatchLoop()

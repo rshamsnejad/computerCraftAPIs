@@ -18,7 +18,7 @@ Next create a simple button
 
 ```lua
 button = buttonAPI.new({
-	x = 1, y = 1, width = 10, height = 1
+    x = 1, y = 1, width = 10, height = 1
 })
 ```
 
@@ -40,8 +40,8 @@ Well, first of all a function is needed which will be called if the button is cl
 
 ```lua
 function clickHandler(element, posX, posY)
-	element.backgroundColor = element.backgroundColor == colors.white and colors.green or colors.white
-	return true
+    element.backgroundColor = element.backgroundColor == colors.white and colors.green or colors.white
+    return true
 end
 ```
 
@@ -59,8 +59,8 @@ and finally we need a event handling system like this
 
 ```lua
 while true do
-	event, side, xPos, yPos = os.pullEvent("mouse_click")
-	viewport:handleClick(xPos, yPos)
+    event, side, xPos, yPos = os.pullEvent("mouse_click")
+    viewport:handleClick(xPos, yPos)
 end
 ```
 

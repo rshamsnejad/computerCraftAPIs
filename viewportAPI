@@ -1,101 +1,101 @@
 -- vim: set filetype=lua:
 
 local viewport = {
-	--- moves the panel behind the viewport
-	-- e.g. a relative movement
-	-- @see setPosition
-	move = function(self, x, y)
-		self.offx = self.offx + x
-		self.offy = self.offy + y
-	end,
+    --- moves the panel behind the viewport
+    -- e.g. a relative movement
+    -- @see setPosition
+    move = function(self, x, y)
+        self.offx = self.offx + x
+        self.offy = self.offy + y
+    end,
 
-	--- sets the panels position
-	-- i.e. an absolute movement
-	-- @see move
-	setPosition = function(self, x, y)
-		self.offx = x
-		self.offy = y
-	end,
+    --- sets the panels position
+    -- i.e. an absolute movement
+    -- @see move
+    setPosition = function(self, x, y)
+        self.offx = x
+        self.offy = y
+    end,
 
-	--- redraws all elements
-	-- @see addElement
-	redraw = function(self)
-		self.term.setTextColor(self.textColor)
-		self.term.setBackgroundColor(self.backgroundColor)
-		if type(self.term.setTextScale) == "function" then
-			self.term.setTextScale(self.textScale)
-		end
-		self.term.clear()
-		for _, element in pairs(self.elements) do
-			if type(element.draw) == "function" then
-				self.term.setTextColor(self.textColor)
-				self.term.setBackgroundColor(self.backgroundColor)
-				element:draw(self.term, self.offx, self.offy)
-			end
-		end
-	end,
+    --- redraws all elements
+    -- @see addElement
+    redraw = function(self)
+        self.term.setTextColor(self.textColor)
+        self.term.setBackgroundColor(self.backgroundColor)
+        if type(self.term.setTextScale) == "function" then
+            self.term.setTextScale(self.textScale)
+        end
+        self.term.clear()
+        for _, element in pairs(self.elements) do
+            if type(element.draw) == "function" then
+                self.term.setTextColor(self.textColor)
+                self.term.setBackgroundColor(self.backgroundColor)
+                element:draw(self.term, self.offx, self.offy)
+            end
+        end
+    end,
 
-	--- adds an element to this viewport
-	-- has to implement a draw function
-	-- has to have x, y, width and heigth parameters or functions
-	-- can have a text parameter
-	-- can implement a callback which will be called upon clicking
-	addElement = function(self, element)
-		table.insert(self.elements, element)
-	end,
+    --- adds an element to this viewport
+    -- has to implement a draw function
+    -- has to have x, y, width and heigth parameters or functions
+    -- can have a text parameter
+    -- can implement a callback which will be called upon clicking
+    addElement = function(self, element)
+        table.insert(self.elements, element)
+    end,
 
-	--- removes an element from this viewport
-	removeElement = function(self, element)
-		table.insert(self.scheduledForRemoval, element)
-	end,
+    --- removes an element from this viewport
+    removeElement = function(self, element)
+        table.insert(self.scheduledForRemoval, element)
+    end,
 
-	--- handles a click on xPos, yPos of this viewport
-	handleClick = function(self, xPos, yPos)
-		redraw = false
-		for _, element in pairs(self.elements) do
-			if type(element.callback) == "function" then
-				startx, starty, width, height, isSticky = element:get(self.term, "x", "y", "width", "height", "isSticky")
-				if (isSticky and xPos >= startx and xPos < (startx + width) and yPos >= starty and yPos < (starty + height)) then
-					redraw = element:callback(xPos, yPos) or redraw
-				elseif ((not isSticky) and (xPos - self.offx) >= startx and (xPos - self.offx) < (startx + width) and (yPos - self.offy) >= starty and (yPos - self.offy) < (starty + height)) then
-					redraw = element:callback(xPos - self.offx, yPos - self.offy) or redraw
-				end
-			end
-		end
+    --- handles a click on xPos, yPos of this viewport
+    handleClick = function(self, xPos, yPos)
+        redraw = false
+        for _, element in pairs(self.elements) do
+            if type(element.callback) == "function" then
+                startx, starty, width, height, isSticky = element:get(self.term, "x", "y", "width", "height", "isSticky")
+                if (isSticky and xPos >= startx and xPos < (startx + width) and yPos >= starty and yPos < (starty + height)) then
+                    redraw = element:callback(xPos, yPos) or redraw
+                elseif ((not isSticky) and (xPos - self.offx) >= startx and (xPos - self.offx) < (startx + width) and (yPos - self.offy) >= starty and (yPos - self.offy) < (starty + height)) then
+                    redraw = element:callback(xPos - self.offx, yPos - self.offy) or redraw
+                end
+            end
+        end
 
-		for i = #self.elements, 1, -1 do
-			for _, v in ipairs(self.scheduledForRemoval) do
-				if v == self.elements[i] then
-					table.remove(self.elements, i)
-				end
-			end
-		end
-		self.scheduledForRemoval = {}
+        for i = #self.elements, 1, -1 do
+            for _, v in ipairs(self.scheduledForRemoval) do
+                if v == self.elements[i] then
+                    table.remove(self.elements, i)
+                end
+            end
+        end
+        self.scheduledForRemoval = {}
 
-		if redraw then
-			self:redraw()
-		end
+        if redraw then
+            self:redraw()
+        end
 
-		return redraw
-	end
+        return redraw
+    end
 }
 --- creates a new viewport
 -- @param term the term to draw on
 function new(options)
-	assert(type(options.term) == "table", "createViewport: expected term")
-	local o = {
-		term = options.term,
-		textColor = options.textColor or colors.white,
-		backgroundColor = options.backgroundColor or colors.black,
-		textScale = options.textScale or 1,
-		offx = 0,
-		offy = 0,
-		elements = {},
-		scheduledForRemoval = {},
-	}
+    assert(type(options.term) == "table", "createViewport: expected term")
+    local o = {
+        term = options.term,
+        textColor = options.textColor or colors.white,
+        backgroundColor = options.backgroundColor or colors.black,
+        textScale = options.textScale or 1,
+        offx = 0,
+        offy = 0,
+        elements = {},
+        scheduledForRemoval = {},
+    }
 
-	setmetatable(o, {__index = viewport})
+    setmetatable(o, {__index = viewport})
 
-	return o
+    return o
 end
 
